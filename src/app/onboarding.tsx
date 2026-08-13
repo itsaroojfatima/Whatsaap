@@ -46,7 +46,6 @@ export default function OnboardingScreen() {
       </View>
 
       <View style={styles.footer}>
-        {/* Yahan onPress mein router.push add kar diya gaya hai */}
         <TouchableOpacity
           style={styles.agreeButton}
           onPress={() => router.push("/contact")}

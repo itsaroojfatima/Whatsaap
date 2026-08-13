@@ -68,9 +68,7 @@ export default function EnterPhoneScreen() {
             isNumberEntered ? styles.activeButton : styles.inactiveButton,
           ]}
           disabled={!isNumberEntered}
-          onPress={() => {
-            console.log("Phone number:", phoneNumber);
-          }}
+          onPress={() => router.push("/otp")}
         >
           <Text
             style={[

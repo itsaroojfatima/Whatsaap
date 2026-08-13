@@ -7,7 +7,6 @@ export default function Index() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      // Agar router replace error de toh safe fallback
       try {
         router.replace("/onboarding");
       } catch (e) {
@@ -20,11 +19,8 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      {/* Header ko yahan se direct hide kar diya hai */}
       <Stack.Screen options={{ headerShown: false }} />
       <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-
-      {/* Kyunke image poori splash screen ki hai, isay full screen render karenge */}
       <Image
         source={require("@/assets/images/image.png")}
         style={styles.fullImage}
