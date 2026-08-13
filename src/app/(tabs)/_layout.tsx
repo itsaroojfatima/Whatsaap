@@ -1,7 +1,9 @@
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { StyleSheet, View } from "react-native";
+
+import StatusIcon from "@/assets/icons/status-svg";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Tabs } from "expo-router";
-import { StyleSheet, View } from "react-native";
 
 export default function TabLayout() {
   return (
@@ -42,11 +44,7 @@ export default function TabLayout() {
           title: "Updates",
           tabBarIcon: ({ focused }) => (
             <View style={[styles.tabIcon, focused && styles.activePill]}>
-              <MaterialCommunityIcons
-                name={focused ? "circle-slice-3" : "circle-outline"}
-                size={24}
-                color="#000000"
-              />
+              <StatusIcon />
             </View>
           ),
         }}
