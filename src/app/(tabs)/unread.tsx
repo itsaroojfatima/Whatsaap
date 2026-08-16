@@ -1,8 +1,8 @@
 import AddIcon from "@/assets/icons/add-svg";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
-  FlatList,
   Modal,
   Platform,
   StatusBar,
@@ -15,88 +15,16 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const chatData = [
-  {
-    id: "1",
-    name: "Him 💔💋🫄",
-    message: 'You reacted ❤️ to "okey jaaan"',
-    time: "7:08 AM",
-    unread: false,
-  },
-  {
-    id: "2",
-    name: "Hadi Ch",
-    message: "Acha weli ho k kra gi",
-    time: "7:06 AM",
-    unread: false,
-  },
-  {
-    id: "3",
-    name: "Uni Legends 🤕🤭",
-    message: "You reacted 👍 to 🎙️ Voice message (...",
-    time: "Yesterday",
-    unread: false,
-  },
-  {
-    id: "4",
-    name: "Chaos crew🤕",
-    message: "Shella: Lanat 🖐️ ber dushmanane...",
-    time: "Yesterday",
-    unread: true,
-  },
-  {
-    id: "5",
-    name: "Uni fellows",
-    message: "Samar: Phir kesy tumhay maza ch...",
-    time: "Yesterday",
-    unread: true,
-  },
-  {
-    id: "6",
-    name: "Chamber of secrets🙃❤️‍🔥💕",
-    message: 'You reacted 😂 to "🤣🤣"',
-    time: "Yesterday",
-    unread: false,
-  },
-];
-
-const filters = ["All", "Unread", "Favorites", "Groups"];
-
-export default function ChatsScreen() {
+export default function UnreadScreen() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeFilter, setActiveFilter] = useState("All");
   const [menuVisible, setMenuVisible] = useState(false);
-
-  const renderItem = ({ item }: { item: any }) => (
-    <TouchableOpacity style={styles.chatItem}>
-      <View style={styles.avatar}>
-        <Text style={styles.avatarText}>{item.name[0]}</Text>
-      </View>
-
-      <View style={styles.chatDetails}>
-        <View style={styles.chatHeaderRow}>
-          <Text style={styles.chatName} numberOfLines={1}>
-            {item.name}
-          </Text>
-          <Text style={[styles.chatTime, item.unread && styles.unreadText]}>
-            {item.time}
-          </Text>
-        </View>
-        <Text
-          style={[styles.chatMessage, item.unread && styles.unreadMessage]}
-          numberOfLines={1}
-        >
-          {item.message}
-        </Text>
-      </View>
-    </TouchableOpacity>
-  );
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
 
-      {/* Header with safe bottom/top spacing so 3-dots are fully clickable */}
+      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.whatsappTitle}>WhatsApp</Text>
         <TouchableOpacity
@@ -178,7 +106,7 @@ export default function ChatsScreen() {
           />
           <TextInput
             style={styles.input}
-            placeholder="Ask Meta AI or Search"
+            placeholder="Search unread chats"
             placeholderTextColor="#8696a0"
             value={searchQuery}
             onChangeText={setSearchQuery}
@@ -188,41 +116,41 @@ export default function ChatsScreen() {
 
       {/* Filter Chips */}
       <View style={styles.filtersContainer}>
-        {filters.map((filter) => {
-          const isActive = activeFilter === filter;
-          return (
-            <TouchableOpacity
-              key={filter}
-              style={[
-                styles.chip,
-                isActive ? styles.activeChip : styles.inactiveChip,
-              ]}
-              onPress={() => setActiveFilter(filter)}
-            >
-              <Text
-                style={[
-                  styles.chipText,
-                  isActive ? styles.activeChipText : styles.inactiveChipText,
-                ]}
-              >
-                {filter}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
+        <TouchableOpacity
+          style={styles.inactiveChip}
+          onPress={() => router.push("/(tabs)/chats")}
+        >
+          <Text style={styles.inactiveChipText}>All</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.activeChip}>
+          <Text style={styles.activeChipText}>Unread</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.inactiveChip}>
+          <Text style={styles.inactiveChipText}>Favorites</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.inactiveChip}>
+          <Text style={styles.inactiveChipText}>Groups</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity style={styles.plusChip}>
           <Ionicons name="add" size={18} color="#54656f" />
         </TouchableOpacity>
       </View>
 
-      {/* Scrollable Chat List */}
-      <FlatList
-        data={chatData}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        contentContainerStyle={styles.listContainer}
-        showsVerticalScrollIndicator={false}
-      />
+      {/* Empty State View */}
+      <View style={styles.emptyContainer}>
+        <View style={styles.emptyIconCircle}>
+          <Ionicons name="checkmark" size={32} color="#00a884" />
+        </View>
+        <Text style={styles.emptyTitle}>No unread chats</Text>
+        <Text style={styles.emptySubtitle}>You're all caught up.</Text>
+        <TouchableOpacity onPress={() => router.push("/(tabs)/chats")}>
+          <Text style={styles.viewAllText}>View all chats</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* Floating Buttons */}
       <View style={styles.fabContainer}>
@@ -321,26 +249,28 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     alignItems: "center",
   },
-  chip: {
+  activeChip: {
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: 16,
     marginRight: 8,
-  },
-  activeChip: {
     backgroundColor: "#d8fdd2",
   },
   inactiveChip: {
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 16,
+    marginRight: 8,
     backgroundColor: "#f0f2f5",
   },
-  chipText: {
+  activeChipText: {
     fontSize: 13,
     fontWeight: "500",
-  },
-  activeChipText: {
     color: "#005c4b",
   },
   inactiveChipText: {
+    fontSize: 13,
+    fontWeight: "500",
     color: "#54656f",
   },
   plusChip: {
@@ -352,62 +282,38 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginLeft: 2,
   },
-  listContainer: {
-    paddingBottom: 90,
-  },
-  chatItem: {
-    flexDirection: "row",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    alignItems: "center",
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "#687684",
+  emptyContainer: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 14,
+    paddingBottom: 80,
   },
-  avatarText: {
-    color: "#ffffff",
-    fontSize: 18,
-    fontWeight: "bold",
+  emptyIconCircle: {
+    width: 65,
+    height: 65,
+    borderRadius: 32.5,
+    borderWidth: 1.5,
+    borderColor: "#00a884",
+    backgroundColor: "#e8f8f5",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 14,
   },
-  chatDetails: {
-    flex: 1,
-    borderBottomWidth: 0.5,
-    borderBottomColor: "#f0f2f5",
-    paddingBottom: 10,
-  },
-  chatHeaderRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 4,
-  },
-  chatName: {
-    fontSize: 16,
+  emptyTitle: {
+    fontSize: 17,
     fontWeight: "600",
     color: "#111111",
-    flex: 1,
-    marginRight: 8,
+    marginBottom: 4,
   },
-  chatTime: {
-    fontSize: 12,
-    color: "#667781",
-  },
-  unreadText: {
-    color: "#00a884",
-    fontWeight: "bold",
-  },
-  chatMessage: {
+  emptySubtitle: {
     fontSize: 14,
     color: "#667781",
+    marginBottom: 14,
   },
-  unreadMessage: {
-    color: "#111111",
-    fontWeight: "500",
+  viewAllText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#005c4b",
   },
   fabContainer: {
     position: "absolute",
