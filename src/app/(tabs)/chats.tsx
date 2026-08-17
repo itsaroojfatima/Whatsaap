@@ -107,8 +107,6 @@ export default function ChatsScreen() {
           <Ionicons name="ellipsis-vertical" size={22} color="#54656f" />
         </TouchableOpacity>
       </View>
-
-      {/* Popup Menu Modal */}
       <Modal
         visible={menuVisible}
         transparent={true}

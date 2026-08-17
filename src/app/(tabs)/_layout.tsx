@@ -80,9 +80,9 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="you"
+        name="profile"
         options={{
-          title: "You",
+          title: "profile",
           tabBarIcon: ({ focused }) => (
             <View style={[styles.tabIcon, focused && styles.activePill]}>
               <Ionicons
