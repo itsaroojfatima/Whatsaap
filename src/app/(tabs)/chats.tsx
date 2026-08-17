@@ -1,6 +1,4 @@
-import AddIcon from "@/assets/icons/add-svg";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useState } from "react";
 import {
   FlatList,
   Modal,
@@ -13,6 +11,9 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+
+import AddIcon from "@/assets/icons/add-svg";
+import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const chatData = [
@@ -206,6 +207,23 @@ export default function ChatsScreen() {
                 {filter}
               </Text>
             </TouchableOpacity>
+            //  <Button
+            //   style={[
+            //     styles.chip,
+            //     isActive ? styles.activeChip : styles.inactiveChip,
+            //   ]}
+            //   onPress={() => setActiveFilter(filter)}
+            //   key={filter}
+            // >
+            //   <Text
+            //     style={[
+            //       styles.chipText,
+            //       isActive ? styles.activeChipText : styles.inactiveChipText,
+            //     ]}
+            //   >
+            //     {filter}
+            //   </Text>
+            // </Button>
           );
         })}
         <TouchableOpacity style={styles.plusChip}>
