@@ -1,7 +1,6 @@
-import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
-import { useState } from "react";
 import {
+  KeyboardAvoidingView,
   Platform,
   StatusBar,
   StyleSheet,
@@ -9,8 +8,10 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  KeyboardAvoidingView,
 } from "react-native";
+
+import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
 
 export default function VerifyNumberScreen() {
   const router = useRouter();
