@@ -13,6 +13,7 @@ import {
 } from "react-native";
 
 import AddIcon from "@/assets/icons/add-svg";
+import Button from "@/components/button";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -190,7 +191,24 @@ export default function ChatsScreen() {
         {filters.map((filter) => {
           const isActive = activeFilter === filter;
           return (
-            <TouchableOpacity
+            // <TouchableOpacity
+            //   key={filter}
+            //   style={[
+            //     styles.chip,
+            //     isActive ? styles.activeChip : styles.inactiveChip,
+            //   ]}
+            //   onPress={() => setActiveFilter(filter)}
+            // >
+            //   <Text
+            //     style={[
+            //       styles.chipText,
+            //       isActive ? styles.activeChipText : styles.inactiveChipText,
+            //     ]}
+            //   >
+            //     {filter}
+            //   </Text>
+            // </TouchableOpacity>
+            <Button
               key={filter}
               style={[
                 styles.chip,
@@ -206,24 +224,7 @@ export default function ChatsScreen() {
               >
                 {filter}
               </Text>
-            </TouchableOpacity>
-            //  <Button
-            //   style={[
-            //     styles.chip,
-            //     isActive ? styles.activeChip : styles.inactiveChip,
-            //   ]}
-            //   onPress={() => setActiveFilter(filter)}
-            //   key={filter}
-            // >
-            //   <Text
-            //     style={[
-            //       styles.chipText,
-            //       isActive ? styles.activeChipText : styles.inactiveChipText,
-            //     ]}
-            //   >
-            //     {filter}
-            //   </Text>
-            // </Button>
+            </Button>
           );
         })}
         <TouchableOpacity style={styles.plusChip}>
