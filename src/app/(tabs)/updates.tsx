@@ -1,55 +1,23 @@
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Modal,
-  Platform,
+  Pressable,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const channelsData = [
-  {
-    id: "1",
-    name: "VU TOOLKIT (Backup)",
-    message: "Han i love depression anxiety an...",
-    time: "6:07 PM",
-    unreadCount: 23,
-    verified: true,
-  },
-  {
-    id: "2",
-    name: "Learn English with Vocabin...",
-    message: "Photo 📷",
-    time: "5:25 PM",
-    unreadCount: 3,
-    verified: true,
-  },
-  {
-    id: "3",
-    name: "Ai Prompt Gemini Photo Ed...",
-    message: "Voice message (0:20)",
-    time: "2:19 PM",
-    unreadCount: 0,
-    verified: true,
-  },
-  {
-    id: "4",
-    name: "Jobs",
-    message: "https://whatsapp.com/chan...",
-    time: "Yesterday",
-    unreadCount: 0,
-    verified: true,
-  },
-];
-
 export default function UpdatesScreen() {
+  const router = useRouter();
   const [menuVisible, setMenuVisible] = useState(false);
+  const [createChannelModalVisible, setCreateChannelModalVisible] =
+    useState(false);
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -57,295 +25,353 @@ export default function UpdatesScreen() {
 
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.whatsappTitle}>Updates</Text>
+        <Text style={styles.headerTitle}>Updates</Text>
         <View style={styles.headerIcons}>
-          <TouchableOpacity style={styles.iconButton} activeOpacity={0.6}>
-            <Ionicons name="camera-outline" size={24} color="#54656f" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton} activeOpacity={0.6}>
-            <Ionicons name="search" size={22} color="#54656f" />
+          <TouchableOpacity style={styles.iconButton}>
+            <Ionicons name="search" size={22} color="#111111" />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.iconButton}
-            onPress={() => setMenuVisible(true)}
-            activeOpacity={0.6}
+            onPress={() => setMenuVisible(!menuVisible)}
           >
-            <Ionicons name="ellipsis-vertical" size={22} color="#54656f" />
+            <Ionicons name="ellipsis-vertical" size={22} color="#111111" />
           </TouchableOpacity>
         </View>
       </View>
 
-      {/* Popup Menu Modal */}
-      <Modal
-        visible={menuVisible}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setMenuVisible(false)}
-      >
-        <TouchableWithoutFeedback onPress={() => setMenuVisible(false)}>
-          <View style={styles.modalOverlay}>
-            <TouchableWithoutFeedback>
-              <View style={styles.popupMenu}>
-                <TouchableOpacity
-                  style={styles.menuItem}
-                  onPress={() => setMenuVisible(false)}
-                >
-                  <Text style={styles.menuText}>Status privacy</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.menuItem}
-                  onPress={() => setMenuVisible(false)}
-                >
-                  <Text style={styles.menuText}>Create channel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.menuItem}
-                  onPress={() => setMenuVisible(false)}
-                >
-                  <Text style={styles.menuText}>Settings</Text>
-                </TouchableOpacity>
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
+      {/* Popup Menu */}
+      {menuVisible && (
+        <View style={styles.popupMenu}>
+          <TouchableOpacity
+            style={styles.popupItem}
+            onPress={() => {
+              setMenuVisible(false);
+              setCreateChannelModalVisible(true);
+            }}
+          >
+            <Text style={styles.popupText}>Create channel</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.popupItem}
+            onPress={() => {
+              setMenuVisible(false);
+              router.push("/status-prvacey");
+            }}
+          >
+            <Text style={styles.popupText}>Status privacy</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.popupItem}
+            onPress={() => setMenuVisible(false)}
+          >
+            <Text style={styles.popupText}>Starred</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.popupItem}
+            onPress={() => setMenuVisible(false)}
+          >
+            <Text style={styles.popupText}>Ad preferences</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContainer}
-      >
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Status Section */}
-        <Text style={styles.sectionTitle}>Status</Text>
+        <Text style={styles.sectionHeader}>Status</Text>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           style={styles.statusScroll}
         >
-          {/* Add Status Item */}
-          <View style={styles.statusItemContainer}>
-            <View style={styles.addStatusCircle}>
-              <View style={styles.myAvatarPlaceholder}>
-                <Text style={styles.avatarInitial}>M</Text>
-              </View>
+          <TouchableOpacity
+            style={styles.statusCard}
+            onPress={() => router.push("/create-channel")}
+          >
+            <View style={styles.myStatusImageContainer}>
+              <View style={styles.avatarPlaceholder} />
               <View style={styles.plusBadge}>
                 <Ionicons name="add" size={14} color="#ffffff" />
               </View>
             </View>
             <Text style={styles.statusName} numberOfLines={1}>
-              Add status
+              My status
             </Text>
-          </View>
+          </TouchableOpacity>
 
-          {/* Other Status Items */}
-          {[
-            { name: "That funny...", initial: "T" },
-            { name: "Maryam Uni", initial: "M" },
-            { name: "Arain Zaad...", initial: "A" },
-          ].map((item, index) => (
-            <View key={index} style={styles.statusItemContainer}>
-              <View style={styles.statusRing}>
-                <View style={styles.statusAvatar}>
-                  <Text style={styles.avatarInitial}>{item.initial}</Text>
-                </View>
-              </View>
-              <Text style={styles.statusName} numberOfLines={1}>
-                {item.name}
-              </Text>
+          <TouchableOpacity style={styles.statusCard}>
+            <View style={styles.otherStatusRing}>
+              <View style={styles.avatarPlaceholderOther} />
             </View>
-          ))}
+            <Text style={styles.statusName} numberOfLines={1}>
+              Gulshan
+            </Text>
+          </TouchableOpacity>
         </ScrollView>
 
-        {/* Channels Section Header */}
+        {/* Channels Section */}
         <View style={styles.channelsHeaderRow}>
-          <Text style={styles.sectionTitle}>Channels</Text>
-          <TouchableOpacity style={styles.exploreButton}>
+          <Text style={styles.sectionHeader}>Channels</Text>
+          <TouchableOpacity style={styles.exploreBtn}>
             <Text style={styles.exploreText}>Explore</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Channels List */}
-        {channelsData.map((channel) => (
-          <TouchableOpacity key={channel.id} style={styles.channelItem}>
-            <View style={styles.channelAvatar}>
-              <Text style={styles.channelAvatarText}>{channel.name[0]}</Text>
+        <View style={styles.channelItem}>
+          <View style={styles.channelAvatar}>
+            <Ionicons name="shield-checkmark" size={24} color="#25D366" />
+          </View>
+          <View style={styles.channelInfo}>
+            <View style={styles.channelTitleRow}>
+              <Text style={styles.channelName}>Trader</Text>
+              <Text style={styles.channelTime}>2:28 AM</Text>
             </View>
-            <View style={styles.channelDetails}>
-              <View style={styles.channelNameRow}>
-                <Text style={styles.channelName} numberOfLines={1}>
-                  {channel.name}
-                </Text>
-                {channel.verified && (
-                  <Ionicons
-                    name="checkmark-circle"
-                    size={14}
-                    color="#00a884"
-                    style={{ marginLeft: 4 }}
-                  />
-                )}
-              </View>
-              <Text style={styles.channelMessage} numberOfLines={1}>
-                {channel.message}
+            <View style={styles.channelSubtitleRow}>
+              <Ionicons
+                name="image"
+                size={14}
+                color="#54656f"
+                style={{ marginRight: 4 }}
+              />
+              <Text style={styles.channelSnippet} numberOfLines={1}>
+                🚀 HYPE/USDT UPDATE 🚀...
               </Text>
+              <View style={styles.unreadBadge}>
+                <Text style={styles.unreadText}>10</Text>
+              </View>
             </View>
-            <View style={styles.channelRightCol}>
-              <Text style={styles.channelTime}>{channel.time}</Text>
-              {channel.unreadCount > 0 && (
-                <View style={styles.unreadBadge}>
-                  <Text style={styles.unreadBadgeText}>
-                    {channel.unreadCount}
-                  </Text>
-                </View>
-              )}
-            </View>
+          </View>
+        </View>
+
+        {/* Find Channels Section */}
+        <Text style={styles.findChannelsTitle}>
+          Stay updated on topics you care about
+        </Text>
+
+        <View style={styles.suggestedChannelCard}>
+          <View style={styles.suggestedAvatar} />
+          <View style={styles.channelInfo}>
+            <Text style={styles.channelName}>FIFA World Cup</Text>
+            <Text style={styles.channelSnippet}>17.6M followers</Text>
+          </View>
+          <TouchableOpacity style={styles.followBtn}>
+            <Text style={styles.followBtnText}>Follow</Text>
           </TouchableOpacity>
-        ))}
+        </View>
+
+        {/* Bottom Action Buttons */}
+        <View style={styles.bottomActionButtons}>
+          <TouchableOpacity style={styles.outlineActionBtn}>
+            <Ionicons
+              name="grid-outline"
+              size={18}
+              color="#005c4b"
+              style={{ marginRight: 8 }}
+            />
+            <Text style={styles.outlineActionText}>Explore more</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.outlineActionBtn}
+            onPress={() => setCreateChannelModalVisible(true)}
+          >
+            <Ionicons
+              name="add"
+              size={20}
+              color="#005c4b"
+              style={{ marginRight: 6 }}
+            />
+            <Text style={styles.outlineActionText}>Create channel</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
 
-      {/* Floating Action Buttons */}
-      <View style={styles.fabContainer}>
-        <TouchableOpacity style={styles.pencilFab}>
-          <Ionicons name="pencil" size={18} color="#111111" />
+      {/* Floating Buttons */}
+      <View style={styles.floatingButtonsContainer}>
+        <TouchableOpacity style={styles.smallFab}>
+          <Ionicons name="pencil" size={20} color="#333" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.cameraFab}>
+        <TouchableOpacity style={styles.largeFab}>
           <Ionicons name="camera" size={22} color="#ffffff" />
         </TouchableOpacity>
       </View>
+
+      {/* Create Channel Bottom Sheet Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={createChannelModalVisible}
+        onRequestClose={() => setCreateChannelModalVisible(false)}
+      >
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={() => setCreateChannelModalVisible(false)}
+        >
+          <Pressable style={styles.bottomSheetContainer}>
+            <View style={styles.sheetIndicator} />
+
+            <View style={styles.broadcastIconContainer}>
+              <Ionicons name="chatbubbles" size={42} color="#00a884" />
+            </View>
+
+            <Text style={styles.sheetTitle}>
+              Create a channel to reach unlimited followers
+            </Text>
+
+            <View style={styles.instructionRow}>
+              <Ionicons
+                name="globe-outline"
+                size={22}
+                color="#00a884"
+                style={styles.instructionIcon}
+              />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.instructionHeading}>
+                  Anyone can discover your channel
+                </Text>
+                <Text style={styles.instructionDesc}>
+                  Channels are public, so anyone can find them and see 30 days
+                  of history.
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.instructionRow}>
+              <Ionicons
+                name="eye-off-outline"
+                size={22}
+                color="#00a884"
+                style={styles.instructionIcon}
+              />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.instructionHeading}>
+                  People see your channel, not you
+                </Text>
+                <Text style={styles.instructionDesc}>
+                  Followers can't see your phone number, profile picture or
+                  name, but other admins can.
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.instructionRow}>
+              <Ionicons
+                name="shield-checkmark-outline"
+                size={22}
+                color="#00a884"
+                style={styles.instructionIcon}
+              />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.instructionHeading}>
+                  You're responsible for your channel
+                </Text>
+                <Text style={styles.instructionDesc}>
+                  Your channel needs to follow our{" "}
+                  <Text style={styles.guidelinesText}>guidelines</Text> and is
+                  reviewed against them.
+                </Text>
+              </View>
+            </View>
+
+            <TouchableOpacity
+              style={styles.continueButton}
+              onPress={() => setCreateChannelModalVisible(false)}
+            >
+              <Text style={styles.continueButtonText}>Continue</Text>
+            </TouchableOpacity>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#ffffff",
-  },
+  container: { flex: 1, backgroundColor: "#ffffff" },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: 16,
-    paddingTop: Platform.OS === "android" ? 12 : 8,
-    paddingBottom: 12,
-  },
-  whatsappTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#00a884",
-  },
-  headerIcons: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  iconButton: {
-    width: 36,
-    height: 36,
-    justifyContent: "center",
-    alignItems: "center",
-    marginLeft: 12,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.05)",
-    justifyContent: "flex-start",
-    alignItems: "flex-end",
-  },
-  popupMenu: {
-    backgroundColor: "#ffffff",
-    borderRadius: 8,
-    marginTop: Platform.OS === "android" ? 60 : 50,
-    marginRight: 12,
-    width: 170,
-    elevation: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    paddingVertical: 6,
-  },
-  menuItem: {
-    paddingHorizontal: 20,
     paddingVertical: 12,
   },
-  menuText: {
-    fontSize: 15,
-    color: "#111111",
+  headerTitle: { fontSize: 22, fontWeight: "bold", color: "#111111" },
+  headerIcons: { flexDirection: "row", alignItems: "center" },
+  iconButton: { padding: 8, marginLeft: 8 },
+  popupMenu: {
+    position: "absolute",
+    top: 55,
+    right: 16,
+    backgroundColor: "#ffffff",
+    borderRadius: 8,
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    width: 170,
+    zIndex: 100,
+    paddingVertical: 6,
   },
-  scrollContainer: {
-    paddingBottom: 90,
+  popupItem: { paddingVertical: 12, paddingHorizontal: 16 },
+  popupText: { fontSize: 15, color: "#111111" },
+  scrollContent: { paddingBottom: 80 },
+  sectionHeader: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#54656f",
+    marginHorizontal: 16,
+    marginTop: 12,
+    marginBottom: 8,
   },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#111111",
-    paddingHorizontal: 16,
-    marginBottom: 12,
-  },
-  statusScroll: {
-    paddingLeft: 16,
-    marginBottom: 16,
-  },
-  statusItemContainer: {
-    alignItems: "center",
-    marginRight: 14,
-    width: 68,
-  },
-  addStatusCircle: {
-    width: 62,
-    height: 62,
-    borderRadius: 31,
-    backgroundColor: "#f0f2f5",
+  statusScroll: { paddingLeft: 16, marginBottom: 12 },
+  statusCard: { alignItems: "center", marginRight: 16, width: 70 },
+  myStatusImageContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "#111",
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
-    marginBottom: 6,
   },
-  myAvatarPlaceholder: {
+  avatarPlaceholder: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: "#687684",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  avatarInitial: {
-    color: "#ffffff",
-    fontSize: 20,
-    fontWeight: "bold",
+    backgroundColor: "#222",
   },
   plusBadge: {
     position: "absolute",
     bottom: 0,
     right: 0,
+    backgroundColor: "#00a884",
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: "#00a884",
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 2,
-    borderColor: "#ffffff",
+    borderColor: "#fff",
   },
-  statusRing: {
+  otherStatusRing: {
     width: 62,
     height: 62,
     borderRadius: 31,
-    borderWidth: 2.5,
+    borderWidth: 2,
     borderColor: "#00a884",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 6,
   },
-  statusAvatar: {
+  avatarPlaceholderOther: {
     width: 54,
     height: 54,
     borderRadius: 27,
-    backgroundColor: "#687684",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "#ddd",
   },
   statusName: {
     fontSize: 12,
-    color: "#111111",
+    color: "#111",
+    marginTop: 4,
     textAlign: "center",
   },
   channelsHeaderRow: {
@@ -353,21 +379,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingRight: 16,
-    paddingHorizontal: 16,
-    marginBottom: 12,
-    marginTop: 4,
   },
-  exploreButton: {
-    backgroundColor: "#e8f8f5",
-    paddingHorizontal: 16,
+  exploreBtn: {
+    paddingHorizontal: 12,
     paddingVertical: 6,
+    backgroundColor: "#f0f2f5",
     borderRadius: 16,
   },
-  exploreText: {
-    color: "#00a884",
-    fontWeight: "600",
-    fontSize: 14,
-  },
+  exploreText: { color: "#005c4b", fontWeight: "600", fontSize: 13 },
   channelItem: {
     flexDirection: "row",
     paddingHorizontal: 16,
@@ -375,91 +394,146 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   channelAvatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: "#687684",
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "#e2e8f0",
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 14,
+    marginRight: 12,
   },
-  channelAvatarText: {
-    color: "#ffffff",
-    fontSize: 18,
-    fontWeight: "bold",
+  channelInfo: { flex: 1 },
+  channelTitleRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  channelDetails: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  channelNameRow: {
+  channelName: { fontSize: 16, fontWeight: "600", color: "#111" },
+  channelTime: { fontSize: 12, color: "#54656f" },
+  channelSubtitleRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 4,
+    marginTop: 2,
   },
-  channelName: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#111111",
-  },
-  channelMessage: {
-    fontSize: 14,
-    color: "#667781",
-  },
-  channelRightCol: {
-    alignItems: "flex-end",
-    justifyContent: "center",
-  },
-  channelTime: {
-    fontSize: 12,
-    color: "#667781",
-    marginBottom: 4,
-  },
+  channelSnippet: { fontSize: 14, color: "#54656f", flex: 1 },
   unreadBadge: {
     backgroundColor: "#00a884",
     borderRadius: 10,
-    minWidth: 20,
-    height: 20,
-    justifyContent: "center",
-    alignItems: "center",
     paddingHorizontal: 6,
-  },
-  unreadBadgeText: {
-    color: "#ffffff",
-    fontSize: 11,
-    fontWeight: "bold",
-  },
-  fabContainer: {
-    position: "absolute",
-    right: 16,
-    bottom: 20,
+    paddingVertical: 2,
+    minWidth: 20,
     alignItems: "center",
   },
-  pencilFab: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
+  unreadText: { color: "#fff", fontSize: 11, fontWeight: "bold" },
+  findChannelsTitle: {
+    fontSize: 14,
+    color: "#54656f",
+    marginHorizontal: 16,
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  suggestedChannelCard: {
+    flexDirection: "row",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    alignItems: "center",
+  },
+  suggestedAvatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "#cbd5e1",
+    marginRight: 12,
+  },
+  followBtn: {
+    backgroundColor: "#e7f8f2",
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  followBtnText: { color: "#00a884", fontWeight: "600", fontSize: 14 },
+  bottomActionButtons: { marginTop: 16, paddingHorizontal: 16, gap: 10 },
+  outlineActionBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "#d1d5db",
+    borderRadius: 24,
+    paddingVertical: 12,
+  },
+  outlineActionText: { color: "#005c4b", fontSize: 15, fontWeight: "600" },
+  floatingButtonsContainer: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    alignItems: "center",
+    gap: 12,
+  },
+  smallFab: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: "#f0f2f5",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 12,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 3,
+    elevation: 4,
   },
-  cameraFab: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
-    backgroundColor: "#005c4b",
+  largeFab: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: "#00a884",
     justifyContent: "center",
     alignItems: "center",
     elevation: 4,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
   },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "flex-end",
+  },
+  bottomSheetContainer: {
+    backgroundColor: "#ffffff",
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingHorizontal: 24,
+    paddingBottom: 32,
+    paddingTop: 12,
+  },
+  sheetIndicator: {
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "#cbd5e1",
+    alignSelf: "center",
+    marginBottom: 20,
+  },
+  broadcastIconContainer: { alignSelf: "center", marginBottom: 16 },
+  sheetTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#111",
+    textAlign: "center",
+    marginBottom: 24,
+    paddingHorizontal: 10,
+  },
+  instructionRow: { flexDirection: "row", marginBottom: 20 },
+  instructionIcon: { marginRight: 16, marginTop: 2 },
+  instructionHeading: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: "#111",
+    marginBottom: 2,
+  },
+  instructionDesc: { fontSize: 13, color: "#54656f", lineHeight: 18 },
+  guidelinesText: { color: "#005c4b", fontWeight: "600" },
+  continueButton: {
+    backgroundColor: "#00a884",
+    borderRadius: 24,
+    paddingVertical: 14,
+    alignItems: "center",
+    marginTop: 10,
+  },
+  continueButtonText: { color: "#ffffff", fontSize: 16, fontWeight: "bold" },
 });

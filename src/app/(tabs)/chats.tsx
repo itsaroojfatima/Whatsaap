@@ -13,7 +13,7 @@ import {
 } from "react-native";
 
 import AddIcon from "@/assets/icons/add-svg";
-import Button from "@/components/button";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -65,12 +65,19 @@ const chatData = [
 const filters = ["All", "Unread", "Favorites", "Groups"];
 
 export default function ChatsScreen() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
   const [menuVisible, setMenuVisible] = useState(false);
 
   const renderItem = ({ item }: { item: any }) => (
-    <TouchableOpacity style={styles.chatItem}>
+    <TouchableOpacity
+      style={styles.chatItem}
+      activeOpacity={0.7}
+      onPress={() => {
+        router.push(`/chat?name=${item.name}` as any);
+      }}
+    >
       <View style={styles.avatar}>
         <Text style={styles.avatarText}>{item.name[0]}</Text>
       </View>
@@ -98,7 +105,7 @@ export default function ChatsScreen() {
     <SafeAreaView style={styles.container} edges={["top"]}>
       <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
 
-      {/* Header with safe bottom/top spacing so 3-dots are fully clickable */}
+      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.whatsappTitle}>WhatsApp</Text>
         <TouchableOpacity
@@ -109,6 +116,7 @@ export default function ChatsScreen() {
           <Ionicons name="ellipsis-vertical" size={22} color="#54656f" />
         </TouchableOpacity>
       </View>
+
       <Modal
         visible={menuVisible}
         transparent={true}
@@ -121,43 +129,59 @@ export default function ChatsScreen() {
               <View style={styles.popupMenu}>
                 <TouchableOpacity
                   style={styles.menuItem}
-                  onPress={() => setMenuVisible(false)}
+                  onPress={() => {
+                    setMenuVisible(false);
+                    router.push("/new-group");
+                  }}
                 >
                   <Text style={styles.menuText}>New group</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.menuItem}
-                  onPress={() => setMenuVisible(false)}
+                  onPress={() => {
+                    setMenuVisible(false);
+                  }}
                 >
                   <Text style={styles.menuText}>New community</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.menuItem}
-                  onPress={() => setMenuVisible(false)}
+                  onPress={() => {
+                    setMenuVisible(false);
+                  }}
                 >
                   <Text style={styles.menuText}>Broadcast lists</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.menuItem}
-                  onPress={() => setMenuVisible(false)}
+                  onPress={() => {
+                    setMenuVisible(false);
+                    router.push("/linked-devices" as any);
+                  }}
                 >
                   <Text style={styles.menuText}>Linked devices</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.menuItem}
-                  onPress={() => setMenuVisible(false)}
+                  onPress={() => {
+                    setMenuVisible(false);
+                  }}
                 >
                   <Text style={styles.menuText}>Starred</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.menuItem}
-                  onPress={() => setMenuVisible(false)}
+                  onPress={() => {
+                    setMenuVisible(false);
+                  }}
                 >
                   <Text style={styles.menuText}>Read all</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.menuItem}
-                  onPress={() => setMenuVisible(false)}
+                  onPress={() => {
+                    setMenuVisible(false);
+                  }}
                 >
                   <Text style={styles.menuText}>Settings</Text>
                 </TouchableOpacity>
@@ -167,8 +191,12 @@ export default function ChatsScreen() {
         </TouchableWithoutFeedback>
       </Modal>
 
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
+      {/* Search Bar Wrapper */}
+      <TouchableOpacity
+        style={styles.searchContainer}
+        activeOpacity={0.9}
+        onPress={() => router.push("/search" as any)}
+      >
         <View style={styles.searchBar}>
           <Ionicons
             name="search"
@@ -180,35 +208,18 @@ export default function ChatsScreen() {
             style={styles.input}
             placeholder="Ask Meta AI or Search"
             placeholderTextColor="#8696a0"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
+            editable={false}
+            pointerEvents="none"
           />
         </View>
-      </View>
+      </TouchableOpacity>
 
       {/* Filter Chips */}
       <View style={styles.filtersContainer}>
         {filters.map((filter) => {
           const isActive = activeFilter === filter;
           return (
-            // <TouchableOpacity
-            //   key={filter}
-            //   style={[
-            //     styles.chip,
-            //     isActive ? styles.activeChip : styles.inactiveChip,
-            //   ]}
-            //   onPress={() => setActiveFilter(filter)}
-            // >
-            //   <Text
-            //     style={[
-            //       styles.chipText,
-            //       isActive ? styles.activeChipText : styles.inactiveChipText,
-            //     ]}
-            //   >
-            //     {filter}
-            //   </Text>
-            // </TouchableOpacity>
-            <Button
+            <TouchableOpacity
               key={filter}
               style={[
                 styles.chip,
@@ -224,7 +235,7 @@ export default function ChatsScreen() {
               >
                 {filter}
               </Text>
-            </Button>
+            </TouchableOpacity>
           );
         })}
         <TouchableOpacity style={styles.plusChip}>
@@ -252,7 +263,13 @@ export default function ChatsScreen() {
           />
           <Text style={styles.metaAiText}>Ask Meta AI</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.fabButton}>
+
+        {/* Plus Button routes to Select Contact screen */}
+        <TouchableOpacity
+          style={styles.fabButton}
+          activeOpacity={0.8}
+          onPress={() => router.push("/select-contact" as any)}
+        >
           <AddIcon />
         </TouchableOpacity>
       </View>
@@ -287,7 +304,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.05)",
+    backgroundColor: "transparent",
     justifyContent: "flex-start",
     alignItems: "flex-end",
   },
@@ -297,7 +314,6 @@ const styles = StyleSheet.create({
     marginTop: Platform.OS === "android" ? 60 : 50,
     marginRight: 12,
     width: 210,
-    elevation: 8,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.25,
@@ -412,10 +428,11 @@ const styles = StyleSheet.create({
   },
   chatTime: {
     fontSize: 12,
-    color: "#667781",
+    color: "#111111",
+    fontWeight: "500",
   },
   unreadText: {
-    color: "#00a884",
+    color: "#111111", // Changed from green to dark/black as requested
     fontWeight: "bold",
   },
   chatMessage: {
@@ -440,7 +457,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: 22,
     marginBottom: 12,
-    elevation: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
@@ -458,7 +474,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#005c4b",
     justifyContent: "center",
     alignItems: "center",
-    elevation: 4,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
