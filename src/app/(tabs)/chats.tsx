@@ -17,13 +17,26 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const chatData = [
+interface ChatItem {
+  id: string;
+  name: string;
+  message: string;
+  time: string;
+  unread: boolean;
+  unreadCount?: number;
+  isGroup: boolean;
+  isFavorite: boolean;
+}
+
+const chatData: ChatItem[] = [
   {
     id: "1",
     name: "Him 💔💋🫄",
     message: 'You reacted ❤️ to "okey jaaan"',
     time: "7:08 AM",
     unread: false,
+    isGroup: false,
+    isFavorite: true,
   },
   {
     id: "2",
@@ -31,6 +44,8 @@ const chatData = [
     message: "Acha weli ho k kra gi",
     time: "7:06 AM",
     unread: false,
+    isGroup: false,
+    isFavorite: true,
   },
   {
     id: "3",
@@ -38,6 +53,8 @@ const chatData = [
     message: "You reacted 👍 to 🎙️ Voice message (...",
     time: "Yesterday",
     unread: false,
+    isGroup: true,
+    isFavorite: false,
   },
   {
     id: "4",
@@ -45,6 +62,9 @@ const chatData = [
     message: "Shella: Lanat 🖐️ ber dushmanane...",
     time: "Yesterday",
     unread: true,
+    unreadCount: 3,
+    isGroup: true,
+    isFavorite: false,
   },
   {
     id: "5",
@@ -52,6 +72,9 @@ const chatData = [
     message: "Samar: Phir kesy tumhay maza ch...",
     time: "Yesterday",
     unread: true,
+    unreadCount: 1,
+    isGroup: true,
+    isFavorite: false,
   },
   {
     id: "6",
@@ -59,6 +82,8 @@ const chatData = [
     message: 'You reacted 😂 to "🤣🤣"',
     time: "Yesterday",
     unread: false,
+    isGroup: true,
+    isFavorite: true,
   },
 ];
 
@@ -69,7 +94,20 @@ export default function ChatsScreen() {
   const [activeFilter, setActiveFilter] = useState("All");
   const [menuVisible, setMenuVisible] = useState(false);
 
-  const renderItem = ({ item }: { item: any }) => (
+  const filteredChats = chatData.filter((item) => {
+    if (activeFilter === "Unread") {
+      return item.unread;
+    }
+    if (activeFilter === "Favorites") {
+      return item.isFavorite;
+    }
+    if (activeFilter === "Groups") {
+      return item.isGroup;
+    }
+    return true; // "All"
+  });
+
+  const renderItem = ({ item }: { item: ChatItem }) => (
     <TouchableOpacity
       style={styles.chatItem}
       activeOpacity={0.7}
@@ -90,12 +128,21 @@ export default function ChatsScreen() {
             {item.time}
           </Text>
         </View>
-        <Text
-          style={[styles.chatMessage, item.unread && styles.unreadMessage]}
-          numberOfLines={1}
-        >
-          {item.message}
-        </Text>
+        <View style={styles.chatMessageRow}>
+          <Text
+            style={[styles.chatMessage, item.unread && styles.unreadMessage]}
+            numberOfLines={1}
+          >
+            {item.message}
+          </Text>
+          {item.unread && (
+            <View style={styles.unreadBadge}>
+              <Text style={styles.unreadBadgeText}>
+                {item.unreadCount || 1}
+              </Text>
+            </View>
+          )}
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -244,11 +291,19 @@ export default function ChatsScreen() {
 
       {/* Scrollable Chat List */}
       <FlatList
-        data={chatData}
+        data={filteredChats}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyTitle}>No chats in {activeFilter}</Text>
+            <Text style={styles.emptySubtitle}>
+              Tap another filter to see other chats
+            </Text>
+          </View>
+        }
       />
 
       {/* Floating Buttons */}
@@ -434,13 +489,51 @@ const styles = StyleSheet.create({
     color: "#111111", // Changed from green to dark/black as requested
     fontWeight: "bold",
   },
+  chatMessageRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
   chatMessage: {
     fontSize: 14,
     color: "#667781",
+    flex: 1,
+    marginRight: 6,
   },
   unreadMessage: {
     color: "#111111",
     fontWeight: "500",
+  },
+  unreadBadge: {
+    backgroundColor: "#25D366",
+    minWidth: 20,
+    height: 20,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 5,
+  },
+  unreadBadgeText: {
+    color: "#ffffff",
+    fontSize: 11,
+    fontWeight: "bold",
+  },
+  emptyContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: 80,
+    paddingHorizontal: 24,
+  },
+  emptyTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#111111",
+    marginBottom: 6,
+  },
+  emptySubtitle: {
+    fontSize: 13,
+    color: "#8696a0",
+    textAlign: "center",
   },
   fabContainer: {
     position: "absolute",
