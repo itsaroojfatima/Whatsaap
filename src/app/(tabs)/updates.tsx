@@ -85,7 +85,7 @@ export default function UpdatesScreen() {
         >
           <TouchableOpacity
             style={styles.statusCard}
-            onPress={() => router.push("/create-channel")}
+            onPress={() => router.push("/edit")}
           >
             <View style={styles.myStatusImageContainer}>
               <View style={styles.avatarPlaceholder} />
