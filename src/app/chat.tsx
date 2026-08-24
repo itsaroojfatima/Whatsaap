@@ -366,8 +366,12 @@ export default function ChatDetailScreen() {
         </TouchableWithoutFeedback>
       </Modal>
 
-      {/* Chat Body & Messages List */}
-      <View style={styles.contentBody}>
+      {/* Chat Body & Messages List wrapped in KeyboardAvoidingView */}
+      <KeyboardAvoidingView
+        style={styles.contentBody}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={0}
+      >
         <View style={styles.chatBackground}>
           <FlatList
             ref={flatListRef}
@@ -376,6 +380,8 @@ export default function ChatDetailScreen() {
             renderItem={renderMessageItem}
             contentContainerStyle={styles.messagesList}
             showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="interactive"
             ListHeaderComponent={
               <View style={styles.chatHeaderInfo}>
                 {/* Date Pill */}
@@ -403,63 +409,58 @@ export default function ChatDetailScreen() {
         </View>
 
         {/* Bottom Message Input Bar */}
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0}
-        >
-          <SafeAreaView edges={["bottom"]} style={styles.bottomSafeArea}>
-            <View style={styles.bottomBarContainer}>
-              {/* Main Input Capsule */}
-              <View style={styles.inputCapsule}>
-                <TouchableOpacity style={styles.emojiBtn} activeOpacity={0.7}>
-                  <MaterialCommunityIcons
-                    name="emoticon-happy-outline"
-                    size={24}
-                    color="#8696a0"
-                  />
-                </TouchableOpacity>
-
-                <TextInput
-                  style={styles.textInput}
-                  placeholder="Message"
-                  placeholderTextColor="#8696a0"
-                  multiline
-                  value={inputText}
-                  onChangeText={setInputText}
+        <SafeAreaView edges={["bottom"]} style={styles.bottomSafeArea}>
+          <View style={styles.bottomBarContainer}>
+            {/* Main Input Capsule */}
+            <View style={styles.inputCapsule}>
+              <TouchableOpacity style={styles.emojiBtn} activeOpacity={0.7}>
+                <MaterialCommunityIcons
+                  name="emoticon-happy-outline"
+                  size={24}
+                  color="#8696a0"
                 />
-
-                <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>
-                  <Ionicons name="attach" size={22} color="#8696a0" />
-                </TouchableOpacity>
-
-                {!inputText.trim() && (
-                  <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>
-                    <Ionicons name="camera" size={20} color="#8696a0" />
-                  </TouchableOpacity>
-                )}
-              </View>
-
-              {/* Right Floating Mic / Send Button */}
-              <TouchableOpacity
-                style={styles.sendFab}
-                activeOpacity={0.8}
-                onPress={handleSendMessage}
-              >
-                {inputText.trim() ? (
-                  <Ionicons
-                    name="send"
-                    size={18}
-                    color="#ffffff"
-                    style={{ marginLeft: 2 }}
-                  />
-                ) : (
-                  <Ionicons name="mic" size={22} color="#ffffff" />
-                )}
               </TouchableOpacity>
+
+              <TextInput
+                style={styles.textInput}
+                placeholder="Message"
+                placeholderTextColor="#8696a0"
+                multiline
+                value={inputText}
+                onChangeText={setInputText}
+              />
+
+              <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>
+                <Ionicons name="attach" size={22} color="#8696a0" />
+              </TouchableOpacity>
+
+              {!inputText.trim() && (
+                <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>
+                  <Ionicons name="camera" size={20} color="#8696a0" />
+                </TouchableOpacity>
+              )}
             </View>
-          </SafeAreaView>
-        </KeyboardAvoidingView>
-      </View>
+
+            {/* Right Floating Mic / Send Button */}
+            <TouchableOpacity
+              style={styles.sendFab}
+              activeOpacity={0.8}
+              onPress={handleSendMessage}
+            >
+              {inputText.trim() ? (
+                <Ionicons
+                  name="send"
+                  size={18}
+                  color="#ffffff"
+                  style={{ marginLeft: 2 }}
+                />
+              ) : (
+                <Ionicons name="mic" size={22} color="#ffffff" />
+              )}
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
