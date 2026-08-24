@@ -259,7 +259,7 @@ export default function ChatDetailScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       <StatusBar barStyle="light-content" backgroundColor="#008069" />
 
       {/* WhatsApp Header */}
@@ -288,9 +288,7 @@ export default function ChatDetailScreen() {
               {chatName}
             </Text>
             <Text style={styles.headerSubtitle} numberOfLines={1}>
-              {isGroup
-                ? "tap here for group info"
-                : "online"}
+              {isGroup ? "tap here for group info" : "online"}
             </Text>
           </View>
         </TouchableOpacity>
@@ -368,96 +366,100 @@ export default function ChatDetailScreen() {
         </TouchableWithoutFeedback>
       </Modal>
 
-      {/* Chat Wallpaper Background & Messages List */}
-      <View style={styles.chatBackground}>
-        <FlatList
-          ref={flatListRef}
-          data={messages}
-          keyExtractor={(item) => item.id}
-          renderItem={renderMessageItem}
-          contentContainerStyle={styles.messagesList}
-          showsVerticalScrollIndicator={false}
-          ListHeaderComponent={
-            <View style={styles.chatHeaderInfo}>
-              {/* Date Pill */}
-              <View style={styles.datePill}>
-                <Text style={styles.dateText}>TODAY</Text>
+      {/* Chat Body & Messages List */}
+      <View style={styles.contentBody}>
+        <View style={styles.chatBackground}>
+          <FlatList
+            ref={flatListRef}
+            data={messages}
+            keyExtractor={(item) => item.id}
+            renderItem={renderMessageItem}
+            contentContainerStyle={styles.messagesList}
+            showsVerticalScrollIndicator={false}
+            ListHeaderComponent={
+              <View style={styles.chatHeaderInfo}>
+                {/* Date Pill */}
+                <View style={styles.datePill}>
+                  <Text style={styles.dateText}>TODAY</Text>
+                </View>
+
+                {/* End-to-End Encryption Notice */}
+                <View style={styles.encryptionCard}>
+                  <Ionicons
+                    name="lock-closed"
+                    size={12}
+                    color="#667781"
+                    style={{ marginRight: 4 }}
+                  />
+                  <Text style={styles.encryptionCardText}>
+                    Messages and calls are end-to-end encrypted. No one outside of
+                    this chat, not even WhatsApp, can read or listen to them. Tap
+                    to learn more.
+                  </Text>
+                </View>
               </View>
-
-              {/* End-to-End Encryption Notice */}
-              <View style={styles.encryptionCard}>
-                <Ionicons
-                  name="lock-closed"
-                  size={12}
-                  color="#667781"
-                  style={{ marginRight: 4 }}
-                />
-                <Text style={styles.encryptionCardText}>
-                  Messages and calls are end-to-end encrypted. No one outside of
-                  this chat, not even WhatsApp, can read or listen to them. Tap
-                  to learn more.
-                </Text>
-              </View>
-            </View>
-          }
-        />
-      </View>
-
-      {/* Bottom Message Input Bar */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0}
-      >
-        <View style={styles.bottomBarContainer}>
-          {/* Main Input Capsule */}
-          <View style={styles.inputCapsule}>
-            <TouchableOpacity style={styles.emojiBtn} activeOpacity={0.7}>
-              <MaterialCommunityIcons
-                name="emoticon-happy-outline"
-                size={24}
-                color="#8696a0"
-              />
-            </TouchableOpacity>
-
-            <TextInput
-              style={styles.textInput}
-              placeholder="Message"
-              placeholderTextColor="#8696a0"
-              multiline
-              value={inputText}
-              onChangeText={setInputText}
-            />
-
-            <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>
-              <Ionicons name="attach" size={22} color="#8696a0" />
-            </TouchableOpacity>
-
-            {!inputText.trim() && (
-              <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>
-                <Ionicons name="camera" size={20} color="#8696a0" />
-              </TouchableOpacity>
-            )}
-          </View>
-
-          {/* Right Floating Mic / Send Button */}
-          <TouchableOpacity
-            style={styles.sendFab}
-            activeOpacity={0.8}
-            onPress={handleSendMessage}
-          >
-            {inputText.trim() ? (
-              <Ionicons
-                name="send"
-                size={18}
-                color="#ffffff"
-                style={{ marginLeft: 2 }}
-              />
-            ) : (
-              <Ionicons name="mic" size={22} color="#ffffff" />
-            )}
-          </TouchableOpacity>
+            }
+          />
         </View>
-      </KeyboardAvoidingView>
+
+        {/* Bottom Message Input Bar */}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
+          keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0}
+        >
+          <SafeAreaView edges={["bottom"]} style={styles.bottomSafeArea}>
+            <View style={styles.bottomBarContainer}>
+              {/* Main Input Capsule */}
+              <View style={styles.inputCapsule}>
+                <TouchableOpacity style={styles.emojiBtn} activeOpacity={0.7}>
+                  <MaterialCommunityIcons
+                    name="emoticon-happy-outline"
+                    size={24}
+                    color="#8696a0"
+                  />
+                </TouchableOpacity>
+
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="Message"
+                  placeholderTextColor="#8696a0"
+                  multiline
+                  value={inputText}
+                  onChangeText={setInputText}
+                />
+
+                <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>
+                  <Ionicons name="attach" size={22} color="#8696a0" />
+                </TouchableOpacity>
+
+                {!inputText.trim() && (
+                  <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>
+                    <Ionicons name="camera" size={20} color="#8696a0" />
+                  </TouchableOpacity>
+                )}
+              </View>
+
+              {/* Right Floating Mic / Send Button */}
+              <TouchableOpacity
+                style={styles.sendFab}
+                activeOpacity={0.8}
+                onPress={handleSendMessage}
+              >
+                {inputText.trim() ? (
+                  <Ionicons
+                    name="send"
+                    size={18}
+                    color="#ffffff"
+                    style={{ marginLeft: 2 }}
+                  />
+                ) : (
+                  <Ionicons name="mic" size={22} color="#ffffff" />
+                )}
+              </TouchableOpacity>
+            </View>
+          </SafeAreaView>
+        </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   );
 }
@@ -466,6 +468,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#008069",
+  },
+  contentBody: {
+    flex: 1,
+    backgroundColor: "#efeae2",
+  },
+  bottomSafeArea: {
+    backgroundColor: "#efeae2",
   },
   header: {
     flexDirection: "row",
