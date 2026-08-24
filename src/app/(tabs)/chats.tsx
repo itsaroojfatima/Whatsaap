@@ -66,7 +66,6 @@ const filters = ["All", "Unread", "Favorites", "Groups"];
 
 export default function ChatsScreen() {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
   const [menuVisible, setMenuVisible] = useState(false);
 
