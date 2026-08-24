@@ -112,7 +112,14 @@ export default function ChatsScreen() {
       style={styles.chatItem}
       activeOpacity={0.7}
       onPress={() => {
-        router.push(`/chat?name=${item.name}` as any);
+        router.push({
+          pathname: "/chat",
+          params: {
+            name: item.name,
+            isGroup: item.isGroup ? "true" : "false",
+            id: item.id,
+          },
+        } as any);
       }}
     >
       <View style={styles.avatar}>

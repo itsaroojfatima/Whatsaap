@@ -53,7 +53,20 @@ export default function SelectContactScreen() {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
 
   const renderContactItem = ({ item }: { item: (typeof CONTACTS_DATA)[0] }) => (
-    <TouchableOpacity style={styles.contactRow} activeOpacity={0.7}>
+    <TouchableOpacity
+      style={styles.contactRow}
+      activeOpacity={0.7}
+      onPress={() => {
+        router.push({
+          pathname: "/chat",
+          params: {
+            name: item.name,
+            isGroup: "false",
+            id: item.id,
+          },
+        } as any);
+      }}
+    >
       <View style={styles.avatarContainer}>
         {item.isSelf ? (
           <View style={styles.selfAvatar}>
