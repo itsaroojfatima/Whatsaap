@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   FlatList,
   ImageBackground,
+  Keyboard,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -19,7 +20,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface Message {
   id: string;
@@ -129,6 +130,7 @@ const DEFAULT_MESSAGES: Record<string, Message[]> = {
 
 export default function ChatDetailScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{
     name?: string;
     isGroup?: string;
@@ -148,7 +150,28 @@ export default function ChatDetailScreen() {
   );
   const [inputText, setInputText] = useState("");
   const [menuVisible, setMenuVisible] = useState(false);
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const flatListRef = useRef<FlatList>(null);
+
+  useEffect(() => {
+    const showSub = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+      () => {
+        setKeyboardVisible(true);
+        setTimeout(() => {
+          flatListRef.current?.scrollToEnd({ animated: true });
+        }, 100);
+      }
+    );
+    const hideSub = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+      () => setKeyboardVisible(false)
+    );
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   useEffect(() => {
     // Scroll to end when messages change
@@ -259,11 +282,19 @@ export default function ChatDetailScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
       <StatusBar barStyle="light-content" backgroundColor="#008069" />
 
       {/* WhatsApp Header */}
-      <View style={styles.header}>
+      <View
+        style={[
+          styles.header,
+          { paddingTop: insets.top + (Platform.OS === "android" ? 8 : 4) },
+        ]}
+      >
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
@@ -366,12 +397,8 @@ export default function ChatDetailScreen() {
         </TouchableWithoutFeedback>
       </Modal>
 
-      {/* Chat Body & Messages List wrapped in KeyboardAvoidingView */}
-      <KeyboardAvoidingView
-        style={styles.contentBody}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        keyboardVerticalOffset={0}
-      >
+      {/* Chat Body & Messages List */}
+      <View style={styles.contentBody}>
         <View style={styles.chatBackground}>
           <FlatList
             ref={flatListRef}
@@ -409,59 +436,69 @@ export default function ChatDetailScreen() {
         </View>
 
         {/* Bottom Message Input Bar */}
-        <SafeAreaView edges={["bottom"]} style={styles.bottomSafeArea}>
-          <View style={styles.bottomBarContainer}>
-            {/* Main Input Capsule */}
-            <View style={styles.inputCapsule}>
-              <TouchableOpacity style={styles.emojiBtn} activeOpacity={0.7}>
-                <MaterialCommunityIcons
-                  name="emoticon-happy-outline"
-                  size={24}
-                  color="#8696a0"
-                />
-              </TouchableOpacity>
-
-              <TextInput
-                style={styles.textInput}
-                placeholder="Message"
-                placeholderTextColor="#8696a0"
-                multiline
-                value={inputText}
-                onChangeText={setInputText}
+        <View
+          style={[
+            styles.bottomBarContainer,
+            {
+              paddingBottom:
+                !isKeyboardVisible && insets.bottom > 0
+                  ? insets.bottom
+                  : Platform.OS === "ios"
+                  ? 6
+                  : 8,
+            },
+          ]}
+        >
+          {/* Main Input Capsule */}
+          <View style={styles.inputCapsule}>
+            <TouchableOpacity style={styles.emojiBtn} activeOpacity={0.7}>
+              <MaterialCommunityIcons
+                name="emoticon-happy-outline"
+                size={24}
+                color="#8696a0"
               />
-
-              <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>
-                <Ionicons name="attach" size={22} color="#8696a0" />
-              </TouchableOpacity>
-
-              {!inputText.trim() && (
-                <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>
-                  <Ionicons name="camera" size={20} color="#8696a0" />
-                </TouchableOpacity>
-              )}
-            </View>
-
-            {/* Right Floating Mic / Send Button */}
-            <TouchableOpacity
-              style={styles.sendFab}
-              activeOpacity={0.8}
-              onPress={handleSendMessage}
-            >
-              {inputText.trim() ? (
-                <Ionicons
-                  name="send"
-                  size={18}
-                  color="#ffffff"
-                  style={{ marginLeft: 2 }}
-                />
-              ) : (
-                <Ionicons name="mic" size={22} color="#ffffff" />
-              )}
             </TouchableOpacity>
+
+            <TextInput
+              style={styles.textInput}
+              placeholder="Message"
+              placeholderTextColor="#8696a0"
+              multiline
+              value={inputText}
+              onChangeText={setInputText}
+            />
+
+            <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>
+              <Ionicons name="attach" size={22} color="#8696a0" />
+            </TouchableOpacity>
+
+            {!inputText.trim() && (
+              <TouchableOpacity style={styles.actionBtn} activeOpacity={0.7}>
+                <Ionicons name="camera" size={20} color="#8696a0" />
+              </TouchableOpacity>
+            )}
           </View>
-        </SafeAreaView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+
+          {/* Right Floating Mic / Send Button */}
+          <TouchableOpacity
+            style={styles.sendFab}
+            activeOpacity={0.8}
+            onPress={handleSendMessage}
+          >
+            {inputText.trim() ? (
+              <Ionicons
+                name="send"
+                size={18}
+                color="#ffffff"
+                style={{ marginLeft: 2 }}
+              />
+            ) : (
+              <Ionicons name="mic" size={22} color="#ffffff" />
+            )}
+          </TouchableOpacity>
+        </View>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
